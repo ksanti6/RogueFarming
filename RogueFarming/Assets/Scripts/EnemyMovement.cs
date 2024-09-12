@@ -8,6 +8,9 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField]
     private float _speed = 1f;
 
+    [SerializeField]
+    private float _maxDistance = 1f;
+
     public GameObject t;
     public GameObject container;
 
@@ -27,9 +30,19 @@ public class EnemyMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if(_path.Count > 0)
         {
-            MoveAlongPath();
+            if(Vector3.Distance(_target.position, _path[_path.Count - 1]) > _maxDistance)
+            {
+                GetNewPath();
+            }
+            else
+            {
+                MoveAlongPath();
+            }
+
+            
         }
         else
         {
@@ -63,6 +76,8 @@ public class EnemyMovement : MonoBehaviour
         g.m_gridMap.TryGetValue(g.GetGridFromWorld(transform.position), out start);
 
         _path = pathing.FindPath(start, end);
+
+        _path.RemoveAt(0);
 
         foreach(Vector3 v in _path)
         {
